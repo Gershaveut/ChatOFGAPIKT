@@ -1,6 +1,7 @@
 package com.gershaveut.coapikt
 
 class Message(var text: String, var messageType: MessageType = MessageType.Message) {
+	var arguments: String? = null
 	
 	override fun equals(other: Any?): Boolean {
 		when (other) {
@@ -24,7 +25,12 @@ class Message(var text: String, var messageType: MessageType = MessageType.Messa
 	companion object {
 		fun createMessageFromText(text: String): Message {
 			return try {
-				Message(text.substring(text.indexOf(':') + 1), MessageType.valueOf(text.split(':')[0]))
+				val messageType = MessageType.valueOf(text.split(':')[0])
+				
+				Message(if (messageType.haveArguments) text.substring(text.indexOf(':') + 1) else text.split(':', limit = 2)[1], messageType).apply {
+					if (messageType.haveArguments)
+						arguments = text.split(':')[2]
+				}
 			} catch (_: Exception) {
 				Message(text)
 			}
