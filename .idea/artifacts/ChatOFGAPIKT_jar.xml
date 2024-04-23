@@ -3,8 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/ChatOFGAPIKT_jar</output-path>
     <root id="archive" name="ChatOFGAPIKT.jar">
       <element id="module-output" name="ChatOFGAPIKT" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.9.23/kotlin-stdlib-1.9.23.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

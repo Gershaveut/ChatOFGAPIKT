@@ -25,11 +25,12 @@ class Message(var text: String, var messageType: MessageType = MessageType.Messa
 	companion object {
 		fun createMessageFromText(text: String): Message {
 			return try {
-				val messageType = MessageType.valueOf(text.split(':')[0])
+				val splitText = text.split(':')
+				val messageType = MessageType.valueOf(splitText[0])
 				
-				Message(if (messageType.haveArguments) text.substring(text.indexOf(':') + 1) else text.split(':', limit = 2)[1], messageType).apply {
-					if (messageType.haveArguments)
-						arguments = text.split(':')[2]
+				Message(if (messageType.haveArguments) splitText[1] else text.substring(text.indexOf(':') + 1), messageType).apply {
+					if (messageType.haveArguments && splitText.count() > 2)
+						arguments = splitText[2]
 				}
 			} catch (_: Exception) {
 				Message(text)
