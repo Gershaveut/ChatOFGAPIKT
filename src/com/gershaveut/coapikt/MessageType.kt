@@ -5,5 +5,6 @@ enum class MessageType(val haveArguments: Boolean) {
 	Join(false),
 	Leave(false),
 	Kick(true),
-	Error(false)
+	Error(false),
+	Broadcast(false)
 }
