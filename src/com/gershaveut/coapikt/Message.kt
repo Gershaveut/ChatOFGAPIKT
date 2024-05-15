@@ -1,40 +1,38 @@
 package com.gershaveut.coapikt
 
-class Message(var text: String, var messageType: MessageType = MessageType.Message) {
-	var arguments: String? = null
-	
-	override fun equals(other: Any?): Boolean {
-		when (other) {
-			is MessageType -> return messageType == other
-			is String -> return text == other
-		}
-		
-		return super.equals(other)
-	}
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
+
+data class Message(var text: String, var messageType: MessageType? = MessageType.Message) : JsonDeserializer<Message> {
+	var argument: String? = null
+	var color: Array<Int> = arrayOf(0, 0, 0)
 	
 	override fun toString(): String {
-		return "$messageType:$text"
-	}
-	
-	override fun hashCode(): Int {
-		var result = text.hashCode()
-		result = 31 * result + messageType.hashCode()
-		return result
+		return gson.toJson(this, type)
 	}
 	
 	companion object {
-		fun createMessageFromText(text: String): Message {
+		val gson = GsonBuilder().registerTypeAdapter(Message::class.java, this).create()
+		val type: Type = object : TypeToken<Message>() {}.type
+		
+		fun parseMessage(text: String): Message {
 			return try {
-				val splitText = text.split(':')
-				val messageType = MessageType.valueOf(splitText[0])
-				
-				Message(if (messageType.haveArguments) splitText[1] else text.substring(text.indexOf(':') + 1), messageType).apply {
-					if (messageType.haveArguments && splitText.count() > 2)
-						arguments = splitText[2]
-				}
+				return gson.fromJson(text, type)
 			} catch (_: Exception) {
 				Message(text)
 			}
 		}
+	}
+	
+	override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Message {
+		val jsonObject = json.asJsonObject
+		
+		val text = jsonObject.get("text").asString
+		val messageType = jsonObject.get("messageType")?.asString ?: MessageType.Message.toString()
+		val argument = jsonObject.get("argument")?.asString
+		val color = jsonObject.get("color")?.asJsonArray?.map { it.asInt }?.toTypedArray() ?: arrayOf(0, 0, 0)
+		
+		return Message(text, MessageType.valueOf(messageType)).apply { this.argument = argument; this.color = color }
 	}
 }
